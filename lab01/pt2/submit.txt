@@ -1,0 +1,2 @@
+The given code worked perfectly for part 1, and we adapted the instructions
+for part two with little effort.
