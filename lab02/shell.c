@@ -1,15 +1,8 @@
-/**
- * Simple shell interface program.
- *
- * Operating System Concepts - Ninth Edition
- * Copyright John Wiley & Sons - 2013
- */
-
 #include <stdio.h>
-#include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
-
+#include <sys/wait.h>
 
 #define MAX_LINE		80 /* 80 chars per line, per command */
 
@@ -19,48 +12,55 @@ int main(void)
         char raw[MAX_LINE];
         int should_run = 1;
 
-        int i, upper;
+        int i, charRead, noWait;
 
         while (should_run){   
                 i = 0;
-                memset(args,0, sizeof args);
-                printf("mmsh-->");
+                charRead = 0;
+                noWait = 0;
+                printf("mmsh--> ");
                 fflush(stdout);
-                scanf("%s",&raw);
-                printf("%s",raw);
+                fgets(raw,MAX_LINE,stdin);
+                raw[strlen(raw)-1] = '\0'; 
                 args[0] = strtok(raw," ");
                 while(args[i] != NULL)
                 {
-                        i++;
-                        args[i] = strtok(NULL," ");
-                        //printf("%s",args[i]);
+                        if(strcmp(args[i],"&") == 0)
+                        {
+                                noWait = 1;
+                                printf("no wait\n");
+                        }
+                        args[++i] = strtok(NULL," ");
                 }
-                if(strcmp(args[0],"exit") == 0)
+                if(args[0] == NULL)
+                {
+                        continue;
+                }
+                else if(strcmp(args[0],"exit") == 0)
                 {
                         should_run = 0;
                         continue;
                 }
-                /* After reading user input, the steps are:
-                 * (1) fork a child process
-                 */
                 pid_t pid = fork();
                 if(pid == 0)
                 {
-                        /*
-                         * (2) the child process will invoke execvp()
-                         */
                         execvp(args[0], args);
                 } 
-                else 
+                else if(pid < 0)
                 {
-                        /*
-                         * (3) if command included &, parent will invoke wait()
-                         */
+                        exit(1);
+                } 
+                else 
+                {  
+                        if(noWait == 1)
+                        {
 
-
-
-                }  
+                        }
+                        else
+                        {
+                                wait(NULL);
+                        }
+                }
         }
-
         return 0;
 }
