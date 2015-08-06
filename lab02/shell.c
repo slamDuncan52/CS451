@@ -11,6 +11,7 @@ int main(void)
         char* args[MAX_LINE / 2 + 1]; /* command line (of 80) has max of 40 arguments */
         char raw[MAX_LINE];
         char background = 0;
+        int fd[2];
         int should_run = 1, i, j, charRead;
 
         while (should_run) {
@@ -37,8 +38,11 @@ int main(void)
                         should_run = 0;
                         continue;
                 }
+                pipe(fd);
                 pid_t pid = fork();
                 if (pid == 0) {
+                        close(fd[1]);
+                        read(fd[0], &background, sizeof(int));
                         if (background == 1) {
                                 setpgid(0, 0);
                         }
@@ -48,7 +52,10 @@ int main(void)
                         exit(1);
                 }
                 else {
-                        wait(NULL);
+                        write(fd[1], &background, sizeof(int));
+                        if (background == 0) {
+                                wait(NULL);
+                        }
                 }
         }
         return 0;
