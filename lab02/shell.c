@@ -63,6 +63,9 @@ int main(void)
 					continue;
 				} 
 				else if (strcmp(args[0], "!!") == 0) {
+					if (k == 0) {
+						printf("No Command In History.");
+					}
 					args[0] = history[k-1];
 					continue;
 				}
@@ -73,7 +76,7 @@ int main(void)
 					if (index < 50 && index => 0) {
 						args[0] = history[index];
 					} else {
-						printf("Command Not Available.");
+						printf("No Command In History.");
 					}
 					continue;
 				}
