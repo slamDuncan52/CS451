@@ -13,12 +13,11 @@ int main(void)
         char* history[50];
         char background = 0;
         int fd[2];
-        int should_run = 1, i, j, k, charRead;
+        int should_run = 1, i, j, k = 0, charRead;
 
         while (should_run) {
                 i = 0;
                 j = 0;
-                k = 0;
                 charRead = 0;
                 background = 0;
                 fflush(stdout);
@@ -30,7 +29,7 @@ int main(void)
                 if (k == 50) {
                         for (int l = 0; l < k; l++) {
                                 if (l + 1 == k) {
-                                        history[l] = args[0];
+                                        history[l] = args[0]; // strcpy
                                 } else {
                                         history[l] = history[l + 1];
                                 }
@@ -38,7 +37,7 @@ int main(void)
                 }
 
                 if (k < 50) {
-                        history[k] = args[0];
+                        history[k] = args[0]; // strcpy
                         k++;
                 }
 
@@ -62,19 +61,25 @@ int main(void)
                 else if (strcmp(args[0], "history") == 0) {
                         int l = 0;
 						
-						for (l = k; l >= 0; l--) {
-							if (history[l] != NULL) {
-								printf("%i. %s", l, history[l]);
+						if ( k < 10 ) {
+							for (l = k; l >= 0; l--) {
+								if (history[l] != NULL) {
+									printf("%i. %s", l, history[l]);
+								}
+							}
+						} else {
+							for (l = k; l >= k-11; l--) {
+								if (history[l] != NULL) {
+									printf("%i. %s", l, history[l]);
+								}
 							}
 						}
-                        continue;
                 }
                 else if (strcmp(args[0], "!!") == 0) {
-                        if (k == 0) {
+                        if (history[k-1] == NULL) { // (strcmp(history[k-1], "!!") == 0) Do not proceed - infinite loop!
                             printf("No Command In History.");
                         }
-                        args = history[k - 1];
-                        continue;
+                        *args = history[k - 2];
                 }
                 else if (strstr(args[0], "!") != NULL) { // Attempt to pull in the number after the ! command to execute the nth command in history
                         char* res = (char*)malloc(sizeof(char) * (2));
@@ -84,13 +89,12 @@ int main(void)
 							if (history[index] == NULL) {
 								printf("No Command In History.")
 							} else {
-                                args[0] = history[index];
+                                *args = history[index];
 							}
                         }
                         else {
                                 printf("No Command In History.");
                         }
-                        continue;
                 }
                 pipe(fd);
                 pid_t pid = fork();
