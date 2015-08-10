@@ -10,37 +10,36 @@ int main(void)
 {
         char* args[MAX_LINE / 2 + 1]; /* command line (of 80) has max of 40 arguments */
         char raw[MAX_LINE];
-        char* history[50];
+        char history[50][MAX_LINE];
         char background = 0;
         int fd[2];
-        int should_run = 1, i, j, k, charRead;
-
+        int should_run = 1, i, j, hisLen, charRead;
+        hisLen = 0;
         printf("mmsh--> ");
 
         while (should_run) {
                 i = 0;
                 j = 0;
-                k = 0;
                 charRead = 0;
                 background = 0;
                 fflush(stdout);
                 fgets(raw, MAX_LINE, stdin);
                 raw[strlen(raw) - 1] = '\0';
                 args[0] = strtok(raw, " ");
-				
-                if (k == 50) {
-                        for (int l = 0; l < k; l++) {
-                                if (l + 1 == k) {
-                                        history[l] = args[0];
-                                } else {
-                                        history[l] = history[l + 1];
+
+                if (hisLen == 50) {
+                        for (int l = 0; l < hisLen; l++) {
+                                if (l + 1 == hisLen) {
+                                        strcpy(history[l],args[0]);
+                                }
+                                else {
+                                        strcpy(history[l],history[l + 1]);
                                 }
                         }
                 }
 
-                if (k < 50) {
-                        history[k] = args[0];
-                        k++;
+                if (hisLen < 50) {
+                        strcpy(history[hisLen],args[0]);
                 }
 
                 while (args[i] != NULL) {
@@ -50,48 +49,49 @@ int main(void)
                         }
                         args[++i] = strtok(NULL, " ");
                 }
-				
+
                 if (args[0] == NULL) {
                         continue;
                 }
-				
+
                 else if (strcmp(args[0], "exit") == 0) {
                         should_run = 0;
                         continue;
                 }
-				
+
                 else if (strcmp(args[0], "history") == 0) {
                         int l = 0;
-						
-						for (l = k; l >= 0; l--) {
-							if (history[l] != NULL) {
-								printf("%i. %s", l, history[l]);
-							}
-						}
-                        continue;
+
+                        for (l = hisLen; l >= 0; l--) {
+                                if (history[l] != NULL) {
+                                        printf("%i. %s\n", l, history[l]);
+                                }
+                        }
                 }
                 else if (strcmp(args[0], "!!") == 0) {
-                        if (k == 0) {
-                            printf("No Command In History.");
+                        if (hisLen == 0) {
+                                printf("No Command In History\nmmsh--> ");
+                                continue;
                         }
-                        args = history[k - 1];
-                        continue;
+                        *args = history[hisLen - 1];
                 }
-                else if (strstr(args[0], "!") != NULL) { // Attempt to pull in the number after the ! command to execute the nth command in history
+                else if (strstr(args[0], "!") != NULL) { //Execute the nth command in history
                         char* res = (char*)malloc(sizeof(char) * (2));
-                        strncpy(res, strstr(args[0], "!") + 1, 2); // Question: if the # is not 2 values will it throw a npe or aiobe?
+                        strncpy(res, strstr(args[0], "!") + 1, 2);
                         int index = atoi(res);
                         if (index < 50 && index >= 0) {
-							if (history[index] == NULL) {
-								printf("No Command In History.")
-							} else {
-                                args[0] = history[index];
-							}
+                                if (history[index] == NULL) {
+                                        printf("No Command In History\nmmsh--> ");
+                                        continue;
+                                }
+                                else {
+                                        args[0] = history[index];
+                                }
                         }
                         else {
-                                printf("No Command In History.");
+                                printf("No Command In History\nmmsh--> ");
+                                continue;
                         }
-                        continue;
                 }
                 pipe(fd);
                 pid_t pid = fork();
@@ -108,6 +108,7 @@ int main(void)
                 }
                 else {
                         write(fd[1], &background, sizeof(int));
+                        hisLen++;
                         if (background == 0) {
                                 wait(NULL);
                                 printf("mmsh--> ");
