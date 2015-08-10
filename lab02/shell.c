@@ -26,13 +26,12 @@ int main(void)
                 fgets(raw, MAX_LINE, stdin);
                 raw[strlen(raw) - 1] = '\0';
                 args[0] = strtok(raw, " ");
-
+				
                 if (k == 50) {
                         for (int l = 0; l < k; l++) {
                                 if (l + 1 == k) {
                                         history[l] = args[0];
-                                }
-                                else {
+                                } else {
                                         history[l] = history[l + 1];
                                 }
                         }
@@ -50,33 +49,43 @@ int main(void)
                         }
                         args[++i] = strtok(NULL, " ");
                 }
+				
                 if (args[0] == NULL) {
                         continue;
                 }
+				
                 else if (strcmp(args[0], "exit") == 0) {
                         should_run = 0;
                         continue;
                 }
+				
                 else if (strcmp(args[0], "history") == 0) {
-                        int l;
-                        for (l = k - 1; l > k - 11; l--) {
-                                printf("%i. %s", l, history[l]);
-                        }
+                        int l = 0;
+						
+						for (l = k; l >= 0; l--) {
+							if (history[l] != NULL) {
+								printf("%i. %s", l, history[l]);
+							}
+						}
                         continue;
                 }
                 else if (strcmp(args[0], "!!") == 0) {
                         if (k == 0) {
-                                printf("No Command In History.");
+                            printf("No Command In History.");
                         }
-                        args[0] = history[k - 1];
+                        args = history[k - 1];
                         continue;
                 }
-                else if (strstr(args[0], "!") != NULL) {
+                else if (strstr(args[0], "!") != NULL) { // Attempt to pull in the number after the ! command to execute the nth command in history
                         char* res = (char*)malloc(sizeof(char) * (2));
                         strncpy(res, strstr(args[0], "!") + 1, 2); // Question: if the # is not 2 values will it throw a npe or aiobe?
                         int index = atoi(res);
                         if (index < 50 && index >= 0) {
+							if (history[index] == NULL) {
+								printf("No Command In History.")
+							} else {
                                 args[0] = history[index];
+							}
                         }
                         else {
                                 printf("No Command In History.");
