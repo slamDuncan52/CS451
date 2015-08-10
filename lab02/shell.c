@@ -15,6 +15,8 @@ int main(void)
         int fd[2];
         int should_run = 1, i, j, k, charRead;
 
+        printf("mmsh--> ");
+
         while (should_run) {
                 i = 0;
                 j = 0;
@@ -22,7 +24,6 @@ int main(void)
                 charRead = 0;
                 background = 0;
                 fflush(stdout);
-                printf("mmsh--> ");
                 fgets(raw, MAX_LINE, stdin);
                 raw[strlen(raw) - 1] = '\0';
                 args[0] = strtok(raw, " ");
@@ -100,6 +101,7 @@ int main(void)
                         write(fd[1], &background, sizeof(int));
                         if (background == 0) {
                                 wait(NULL);
+                                printf("mmsh--> ");
                         }
                 }
         }
