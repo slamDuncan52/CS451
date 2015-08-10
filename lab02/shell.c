@@ -15,13 +15,13 @@ int main(void)
         int fd[2];
         int should_run = 1, i, j, hisLen, charRead;
         hisLen = 0;
-        printf("mmsh--> ");
 
         while (should_run) {
                 i = 0;
                 j = 0;
                 charRead = 0;
                 background = 0;
+                printf("mmsh--> ");
                 fflush(stdout);
                 fgets(raw, MAX_LINE, stdin);
                 raw[strlen(raw) - 1] = '\0';
@@ -30,16 +30,16 @@ int main(void)
                 if (hisLen == 50) {
                         for (int l = 0; l < hisLen; l++) {
                                 if (l + 1 == hisLen) {
-                                        strcpy(history[l],args[0]);
+                                        strcpy(history[l], args[0]);
                                 }
                                 else {
-                                        strcpy(history[l],history[l + 1]);
+                                        strcpy(history[l], history[l + 1]);
                                 }
                         }
                 }
 
                 if (hisLen < 50) {
-                        strcpy(history[hisLen],args[0]);
+                        strcpy(history[hisLen], args[0]);
                 }
 
                 while (args[i] != NULL) {
@@ -66,11 +66,12 @@ int main(void)
                                 if (history[l] != NULL) {
                                         printf("%i. %s\n", l, history[l]);
                                 }
+                                continue;
                         }
                 }
                 else if (strcmp(args[0], "!!") == 0) {
                         if (hisLen == 0) {
-                                printf("No Command In History\nmmsh--> ");
+                                printf("No Command In History\n");
                                 continue;
                         }
                         *args = history[hisLen - 1];
@@ -81,7 +82,7 @@ int main(void)
                         int index = atoi(res);
                         if (index < 50 && index >= 0) {
                                 if (history[index] == NULL) {
-                                        printf("No Command In History\nmmsh--> ");
+                                        printf("No Command In History\n");
                                         continue;
                                 }
                                 else {
@@ -89,7 +90,7 @@ int main(void)
                                 }
                         }
                         else {
-                                printf("No Command In History\nmmsh--> ");
+                                printf("No Command In History\n");
                                 continue;
                         }
                 }
@@ -111,7 +112,6 @@ int main(void)
                         hisLen++;
                         if (background == 0) {
                                 wait(NULL);
-                                printf("mmsh--> ");
                         }
                 }
         }
