@@ -1,0 +1,38 @@
+Script started on Wed 12 Aug 2015 08:21:20 AM EDT
+mmsh--> pwd
+/home/slamduncan52/Projects/school/CS451/lab02
+mmsh--> who -a
+           system boot  2015-08-12 07:55
+LOGIN      tty1         2015-08-12 07:56               554 id=tty1
+slamduncan + pts/0        2015-08-12 07:57 00:02        1052 (:0.0)
+slamduncan + pts/1        2015-08-12 08:12   .          1052 (:0.0)
+           pts/3        2015-08-12 08:08                 0 id=/3    term=0 exit=0
+mmsh--> ls -l -a
+total 56
+drwxr-xr-x 2 slamduncan users  4096 Aug 12 08:21 .
+drwxr-xr-x 6 slamduncan users  4096 Aug  5 10:10 ..
+-rwxr-xr-x 1 slamduncan users 13448 Aug 12 08:17 a.out
+-rw-r--r-- 1 slamduncan users  4513 Aug 12 08:17 shell.c
+-rw-r--r-- 1 slamduncan users 24576 Aug 12 08:17 .shell.c.swp
+-rw-r--r-- 1 slamduncan users     0 Aug 12 08:21 typescript
+mmsh--> sleep 10
+mmsh--> sleep 10 &
+mmsh--> emacs
+mmsh--> emacs &
+mmsh--> history
+7. history
+6. emacs
+5. emacs
+4. sleep
+3. sleep
+2. ls
+1. who
+0. pwd
+mmsh--> !0
+mmsh--> /home/slamduncan52/Projects/school/CS451/lab02
+!04  4
+mmsh--> sleep: missing operand
+Try 'sleep --help' for more information.
+exit
+
+Script done on Wed 12 Aug 2015 08:22:22 AM EDT
