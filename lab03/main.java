@@ -2,6 +2,8 @@
 // Producer - Consumer Problem
 // Mikayla Ray & Mitchell Duncan
 
+#import java.util.Random;
+
 public static void main(String[] args) {
 	
 	final int BUFFER_SIZE = 5;
@@ -34,37 +36,64 @@ public static void main(String[] args) {
 	}
 	
 	// Initialize the buffer
-	int[] buffer = new int[BUFFER_SIZE];
+	public static int[] buffer = new int[BUFFER_SIZE
+	int counter = 0;
+	
+	public synchronize int insert(int value) {
+		try {
+			buffer[counter] = value;
+			counter++;
+			return 0;
+		} catch (Exception e) {
+			return -1;
+		}
+	}
+	
+	public synchronize int remove(int value) {
+		try {
+			buffer[counter] = value;
+			counter--;
+			return 0;
+		} catch (Exception e) {
+			return -1;
+		}
+	}
 	
 	// Create producer threads
 	private static class Producer implements Runnable {
 		public void run() {
-			//
+			
+			// Sleep for random amount of time
+			Thread.sleep(Random.randInt(0, Integer.MAX_VALUE));
+			
+			// Attempt insert
+			insert(Random.randInt(0, Integer.MAX_VALUE));
 		};
 	}
 	
 	while (numOfProducerThreads > 0) {
 		Thread t = new Thread(new Producer());
 		t.start();
-		
-		// TODO: Cleanup threads?
-		
+				
 		numOfProducerThreads--;
 	}
 	
 	// Create consumer threads
 	private static class Consumer implements Runnable {
 		public void run() {
-			//
+			
+			// Sleep for random amount of time
+			Thread.sleep(Random.randInt(0, Integer.MAX_VALUE));
+			
+			// Attempt remove
+			remove(Random.randInt(0, Integer.MAX_VALUE));
 		};
 	}
 	
 	while (numOfConsumerThreads > 0) {
 		Thread t = new Thread(new Consumer());
 		t.start();
-		
-		// TODO: Cleanup threads?
-		
+				
 		numOfConsumerThreads--;
 	}
 	
