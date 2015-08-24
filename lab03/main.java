@@ -4,6 +4,8 @@
 
 public static void main(String[] args) {
 	
+	final int BUFFER_SIZE = 5;
+	
 	// Retrieve command line arguments
 	int sleepTime, numOfProducerThreads, numOfConsumerThreads;
 	
@@ -32,4 +34,40 @@ public static void main(String[] args) {
 	}
 	
 	// Initialize the buffer
+	int[] buffer = new int[BUFFER_SIZE];
+	
+	// Create producer threads
+	private static class Producer implements Runnable {
+		public void run() {
+			//
+		};
+	}
+	
+	while (numOfProducerThreads > 0) {
+		Thread t = new Thread(new Producer());
+		t.start();
+		
+		// TODO: Cleanup threads?
+		
+		numOfProducerThreads--;
+	}
+	
+	// Create consumer threads
+	private static class Consumer implements Runnable {
+		public void run() {
+			//
+		};
+	}
+	
+	while (numOfConsumerThreads > 0) {
+		Thread t = new Thread(new Consumer());
+		t.start();
+		
+		// TODO: Cleanup threads?
+		
+		numOfConsumerThreads--;
+	}
+	
+	// Sleep -> Exit
+	
 }
