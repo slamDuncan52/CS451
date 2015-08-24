@@ -51,7 +51,7 @@ public static void main(String[] args) {
 	
 	public synchronize int remove(int value) {
 		try {
-			buffer[counter] = value;
+			buffer[counter] = null;
 			counter--;
 			return 0;
 		} catch (Exception e) {
@@ -67,7 +67,13 @@ public static void main(String[] args) {
 			Thread.sleep(Random.randInt(0, Integer.MAX_VALUE));
 			
 			// Attempt insert
-			insert(Random.randInt(0, Integer.MAX_VALUE));
+			if (insert(Random.randInt(0, Integer.MAX_VALUE)) == 0) {
+				// Success
+				System.out.println("Producer Thread Id: " + Thread.currentThread().getId() + " Success!");
+			} else {
+				// Failure
+				System.out.println("Producer Thread Id: " + Thread.currentThread().getId() + " Failed!");
+			}
 		};
 	}
 	
@@ -86,7 +92,13 @@ public static void main(String[] args) {
 			Thread.sleep(Random.randInt(0, Integer.MAX_VALUE));
 			
 			// Attempt remove
-			remove(Random.randInt(0, Integer.MAX_VALUE));
+			if (remove(Random.randInt(0, Integer.MAX_VALUE)) == 0) {
+				// Success
+				System.out.println("Consumer Thread Id: " + Thread.currentThread().getId() + " Success!");
+			} else {
+				// Failure
+				System.out.println("Producer Thread Id: " + Thread.currentThread().getId() + " Failed!");
+			}
 		};
 	}
 	
