@@ -97,6 +97,12 @@ public static void main(String[] args) {
 		numOfConsumerThreads--;
 	}
 	
-	// Sleep -> Exit
+	// "Sleep" -> Exit
+	while(sleepTime > 0) {
+		sleepTime--;
+	}
 	
+	if (sleepTime == 0) {
+		exit(0);
+	}
 }
