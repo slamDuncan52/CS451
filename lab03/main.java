@@ -6,7 +6,7 @@
 public Lab3 {
 	public static void main(String[] args) {
 		
-		System.out.println("Lab 3 (Program 3, Chapter 5)\nMikayla Ray & Mitchell Duncan\n" + args + "\n");
+		System.out.println("\nLab 3 (Program 3, Chapter 5)\nMikayla Ray & Mitchell Duncan\nJAVA\n> " + args + "\n");
 		
 		final int BUFFER_SIZE = 5;
 		
