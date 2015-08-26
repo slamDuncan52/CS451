@@ -8,14 +8,14 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <semaphore.h>
-#include <lab3_def.h>
+#include "lab3_def.h"
 
 buffer_item buffer[BUFFER_SIZE];
 int go = 1, rPos = 0, aPos = -1;
 sem_t mutex, empty, full;
 
 int insert(buffer_item item);
-int remove(buffer_item *item);
+int remove_item(buffer_item *item);
 void *consumer(void *param);
 void *producer(void *param);
 
@@ -80,7 +80,8 @@ int insert(buffer_item item) {
    return 0;
 }
 
-int remove(buffer_item *item) {
+// Note: Conflict with stdlib if named "remove"
+int remove_item(buffer_item *item) {
    sem_wait(&full);
    sem_wait(&mutex);
    
@@ -118,7 +119,7 @@ void *consumer(void *param) {
       sleep(2);
       index = rPos%BUFFER_SIZE;
       
-      if(remove(rPos))
+      if(remove_item(rPos))
          printf("ERROR AT: %d\n",index);
       else
          printf("Thread #%d consumed position: %d\n",param,index);

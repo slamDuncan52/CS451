@@ -1,8 +1,11 @@
-// Lab 3 (Program 3 Chapter 5)
-// Producer - Consumer Problem
 // Mikayla Ray & Mitchell Duncan
+// 25 August 2015
+// CS-451 : Operating Systems Concepts
+// Producer-Consumer Problem
+// Java Threads
 
 import java.util.Random;
+import java.util.Arrays;
 
 public class Lab3 {
 
@@ -33,27 +36,30 @@ public class Lab3 {
 
 	public static void main(String[] args) {
 		
-		System.out.println("\nLab 3 (Program 3, Chapter 5)\nMikayla Ray & Mitchell Duncan\nJAVA\n> " + args + "\n");
-				
+      if (args[0] != null && args[1] != null && args[2] != null)
+		   System.out.println("\nLab 3 (Program 3, Chapter 5)\nMikayla Ray & Mitchell Duncan\nJAVA\nSleep: " + args[0] + " | Producer Threads: " + args[1] + " | Consumer Threads: " + args[2] + "\n\n");
+		else
+         System.exit(1);
+         		
 		// Retrieve command line arguments
 		int sleepTime = 0, numOfProducerThreads = 0, numOfConsumerThreads = 0;
 		
-		if ((args[0] == null) || (Integer.valueOf(args[0]) < 0) || (Integer.valueOf(args[0]) > Integer.MAX_VALUE)) {
+		if ((Integer.valueOf(args[0]) < 0) || (Integer.valueOf(args[0]) > Integer.MAX_VALUE)) {
 			sleepTime = 0;
 		} else {
 			sleepTime = Integer.valueOf(args[0]);
 		}
 		
-		if ((args[1] == null) || (Integer.valueOf(args[1]) < 0) || (Integer.valueOf(args[1]) > Integer.MAX_VALUE)) {
+		if ((Integer.valueOf(args[1]) < 0) || (Integer.valueOf(args[1]) > Integer.MAX_VALUE)) {
 			numOfProducerThreads = 0;
 		} else {
 			numOfProducerThreads = Integer.valueOf(args[1]);
 		}
 		
-		if ((args[2] == null) || (Integer.valueOf(args[2]) < 0) || (Integer.valueOf(args[2]) > Integer.MAX_VALUE)) {
-			numOfProducerThreads = 0;
+		if ((Integer.valueOf(args[2]) < 0) || (Integer.valueOf(args[2]) > Integer.MAX_VALUE)) {
+			numOfConsumerThreads = 0;
 		} else {
-			numOfProducerThreads = Integer.valueOf(args[2]);
+			numOfConsumerThreads = Integer.valueOf(args[2]);
 		}
 				
 		// Create producer threads
@@ -107,14 +113,13 @@ public class Lab3 {
 					
 			numOfConsumerThreads--;
 		}
-		
-		// "Sleep" -> Exit
-		while(sleepTime > 0) {
-			sleepTime--;
-		}
-		
-		if (sleepTime == 0) {
-			System.exit(0);
-		}
+
+      try {
+         Thread.sleep(sleepTime);
+         System.out.println(Arrays.toString(buffer));
+         System.exit(0);
+      } catch (InterruptedException e) {
+         System.exit(1);
+      }
 	}
 }
