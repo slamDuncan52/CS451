@@ -8,7 +8,14 @@
 #include <pthread.h>
 #include <stdio.h>
 #include <semaphore.h>
-#include "lab3_def.h"
+
+// Macros 
+#define BUFFER_SIZE 5
+#define NUM_THREADS 50
+#define MAX_RAND 100
+
+// Buffer
+typedef int buffer_item;
 
 buffer_item buffer[BUFFER_SIZE];
 int go = 1, rPos = 0, aPos = -1;
