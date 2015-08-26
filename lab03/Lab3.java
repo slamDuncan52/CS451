@@ -27,8 +27,11 @@ public class Lab3 {
 	public static synchronized int remove(int value) {
 		try {
 			buffer[counter] = 0;
-			counter--;
-			return 0;
+         
+         if (counter > 0)
+            counter--;
+            
+			return (counter+1);
 		} catch (Exception e) {
 			return -1;
 		}
@@ -63,20 +66,22 @@ public class Lab3 {
 		}
 				
 		// Create producer threads
+      final int limit = sleepTime;
 		while (numOfProducerThreads > 0) {
          Thread t = new Thread() {
             public void run() {
                // Sleep for random amount of time
       			try {
-      			   Thread.sleep(new Random().nextInt(Integer.MAX_VALUE));
+      			   Thread.sleep(new Random().nextInt(limit));
                } catch (InterruptedException e) {
                   System.out.println("EXCEPTION!");
                }
       			
       			// Attempt insert
-      			if (insert(new Random().nextInt(Integer.MAX_VALUE)) == 0) {
+               int num = new Random().nextInt(100);
+      			if (insert(num) == 0) {
       				// Success
-      				System.out.println("Producer Thread Id: " + Thread.currentThread().getId() + " Success!");
+      				System.out.println("Producer Thread Id: " + Thread.currentThread().getId() + " inserted " + num);
       			} else {
       				// Failure
       				System.out.println("Producer Thread Id: " + Thread.currentThread().getId() + " Failed!");
@@ -94,15 +99,17 @@ public class Lab3 {
                public void run() {   
                   // Sleep for random amount of time
                   try {
-         			   Thread.sleep(new Random().nextInt(Integer.MAX_VALUE));
+         			   Thread.sleep(new Random().nextInt(limit));
                   } catch (InterruptedException e) {
                      System.out.println("EXCEPTION!");
                   }
          			
          			// Attempt remove
-         			if (remove(new Random().nextInt(Integer.MAX_VALUE)) == 0) {
+                  int num = new Random().nextInt(100);
+                  int result = remove(num);
+         			if (result > -1) {
          				// Success
-         				System.out.println("Consumer Thread Id: " + Thread.currentThread().getId() + " Success!");
+         				System.out.println("Consumer Thread Id: " + Thread.currentThread().getId() + " removed item at position " + result);
          			} else {
          				// Failure
          				System.out.println("Consumer Thread Id: " + Thread.currentThread().getId() + " Failed!");
@@ -116,7 +123,7 @@ public class Lab3 {
 
       try {
          Thread.sleep(sleepTime);
-         System.out.println(Arrays.toString(buffer));
+         System.out.println("\n\n" + Arrays.toString(buffer));
          System.exit(0);
       } catch (InterruptedException e) {
          System.exit(1);
