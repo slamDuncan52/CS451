@@ -56,10 +56,10 @@ int translateNext()
 {
         int logAddr;
         int frame = -1;
-        fscanf(logicalFile, "%d", &logAddr);
         if (feof(logicalFile)) {
                 return 0;
         }
+        fscanf(logicalFile, "%d", &logAddr);
         int page = logAddr / 256;
         int offset = logAddr % 256;
         frame = checkTLB(page);
@@ -69,7 +69,7 @@ int translateNext()
                         frame = pageFault(page);
                 }
         }
-        signed char value = 0;// = resolve(frame, offset);
+        signed char value = resolve(frame, offset);
         totalAddresses++;
         printf("Log: %d Phys: %d Val: %d\n", logAddr, (frame * 256) + offset, value);
         return 1;
