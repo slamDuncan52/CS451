@@ -103,9 +103,7 @@ int pageFault(int page)
         pageFaults++;
         framesUsed++;
         fseek(storeFile, (256 * page), SEEK_SET);
-        for (int i = 0; i < 256; i++) {
-                fread((mainMemory + (framesUsed * 256) + i), 1, 1, storeFile);
-        }
+        fread((mainMemory + (framesUsed * 256)), 1, 256, storeFile);
         pageTable[page] = framesUsed;
         updateTLB(page, framesUsed);
         return framesUsed;
