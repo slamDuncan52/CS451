@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define pageSize 256
-
 /* Function Declares */
 int translateNext();
 int checkTLB(int);
@@ -15,14 +13,14 @@ void updateTLB(int page, int frame);
 /* Global Vars */
 int pageTable[256];
 int TLB[16][2];
-int framesUsed = 0;
-int* mainMemory;
+int framesUsed = -1;
+char* mainMemory;
 int totalAddresses = 0;
 int pageFaults = 0;
 int TLBHits = 0;
 
-FILE* logicalFile;
-FILE* physicalFile;
+FILE* inFile;
+FILE* outFile;
 FILE* storeFile;
 
 int main(int argc, char** argv)
@@ -36,19 +34,21 @@ int main(int argc, char** argv)
                 TLB[i][0] = -1;
                 TLB[i][1] = -1;
         }
-        //Initialize Main Memory with one frame
-        mainMemory = (int*)malloc(256);
-        logicalFile = fopen(argv[1], "r");
-        physicalFile = fopen("answer.txt", "w");
+        //Initialize Main Memory
+        mainMemory = (char*)malloc(65536);
+        inFile = fopen(argv[argc - 1], "r");
+        outFile = fopen("answer.txt", "w");
         storeFile = fopen("BACKING_STORE.bin", "r");
         while (translateNext())
                 ;
-        fclose(logicalFile);
-        fclose(physicalFile);
+        float faultRatio = pageFaults * 1.00 / totalAddresses;
+        float TLBRatio = TLBHits * 1.00 / totalAddresses;
+        fprintf(outFile, "Total Addresses handled: %d\nPage Faults: %d\nPage Fault Rate: %0.3f\nTLB Hits: %d\nTLB Hit Rate: %0.3f\n",
+            totalAddresses, pageFaults, faultRatio, TLBHits, TLBRatio);
+        fclose(inFile);
+        fclose(outFile);
         fclose(storeFile);
         free(mainMemory);
-        printf("Total Addresses handled: %d\nPage Faults: %d\nPage Fault Rate: %0.3f\nTLB Hits: %d\nTLB Hit Rate: %0.3f\n", totalAddresses,
-            pageFaults, pageFaults / totalAddresses, TLBHits, TLBHits / totalAddresses);
         return 0;
 }
 
@@ -56,10 +56,10 @@ int translateNext()
 {
         int logAddr;
         int frame = -1;
-        if (feof(logicalFile)) {
+        fscanf(inFile, "%d", &logAddr);
+        if (feof(inFile)) {
                 return 0;
         }
-        fscanf(logicalFile, "%d", &logAddr);
         int page = logAddr / 256;
         int offset = logAddr % 256;
         frame = checkTLB(page);
@@ -70,8 +70,8 @@ int translateNext()
                 }
         }
         signed char value = resolve(frame, offset);
+        fprintf(outFile, "Virtual: %d Physical: %d Value: %d\n", logAddr, (frame * 256) + offset, value);
         totalAddresses++;
-        printf("Log: %d Phys: %d Val: %d\n", logAddr, (frame * 256) + offset, value);
         return 1;
 }
 
@@ -101,17 +101,14 @@ int checkPT(int page)
 int pageFault(int page)
 {
         pageFaults++;
-        int frame = -1;
-        mainMemory = (int*)realloc(mainMemory, (framesUsed + 1) * 256);
-        fseek(storeFile, 256 * page, SEEK_CUR);
+        framesUsed++;
+        fseek(storeFile, (256 * page), SEEK_SET);
         for (int i = 0; i < 256; i++) {
                 fread((mainMemory + (framesUsed * 256) + i), 1, 1, storeFile);
         }
-        frame = framesUsed;
-        pageTable[page] = frame;
-        framesUsed++;
-        updateTLB(page, frame);
-        return frame;
+        pageTable[page] = framesUsed;
+        updateTLB(page, framesUsed);
+        return framesUsed;
 }
 
 signed char resolve(int frame, int offset)
